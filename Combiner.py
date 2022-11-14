@@ -1,14 +1,16 @@
 import os
 import pandas as pd
-import sys
 import logging
 import argparse
-file_path='combined_file.csv'
+
+file_path = 'combined_file.csv'
+
+
 class Combiner:
     """A class that merge multiple .csv file into one single file and add filename column"""
 
     def __init__(self):
-        self.header=True
+        self.header = True
 
     def add_new_column(self, df, basename):
         """ add <filename> column
@@ -19,7 +21,7 @@ class Combiner:
         """
 
         filename = [basename for x in range(0, len(df))]
-        df['filename']=filename
+        df['filename'] = filename
         logging.info(f"column added for file {basename}")
 
     def verify_files(self, input_csvs):
@@ -34,7 +36,7 @@ class Combiner:
         logging.info("==================================================> verification begins")
         if len(input_csvs) < 1:
             logging.warning("The input is empty.")
-        files=[]
+        files = []
         for csv in input_csvs:
             logging.info(f"verification for {csv} begins")
             if not os.path.exists(csv):
@@ -49,8 +51,8 @@ class Combiner:
         logging.info("==================================================> verification ends")
         return files
 
-    def output(self, csv, chunk_size):
-        """ read files in chunks and output to .csv file/stdout in chunks to be able to combine large files
+    def output(self, csv, chunk_size, verbose):
+        """ read files in chunks and output to .csv file/stdout in chunks to be able to combine large files.
 
         :param
         - csv: the files to be output
@@ -63,28 +65,29 @@ class Combiner:
             df.columns = [col.lower() for col in df.columns]
             df.to_csv(file_path, index=False, header=self.header, chunksize=chunk_size, mode='a')
             stdout_combined_csv = df.to_csv(index=False, header=self.header, chunksize=chunk_size, mode='a')
-            print(stdout_combined_csv, end="")
+            if verbose:
+                print(stdout_combined_csv, end="")
             self.header = False
         logging.info(f"output ends for {csv} ends in chunk size of {chunk_size}")
 
-    def combine(self, input_csvs):
+    def combine(self, input_csvs, verbose=True):
         """ verify inputs, combine files and output to stdout and .csv file
 
         :param
         - input_csvs: the files to be combined
         """
-        files=self.verify_files(input_csvs)
+        files = self.verify_files(input_csvs)
         if os.path.exists(file_path):
             os.remove(file_path)
         chunk_size = 10 ** 7
         logging.info("==================================================> files merging begins")
         for file in files:
-            self.output(file, chunk_size)
+            self.output(file, chunk_size, verbose)
         self.header = True
         logging.info("==================================================> files merging ends")
 
-def main():
 
+def main():
     parser = argparse.ArgumentParser(description="A CSV combiner")
     parser.add_argument("-f", "--files", nargs="+", type=str, metavar="", required=True,
                         help="CSV files to be combined, can't be empty")

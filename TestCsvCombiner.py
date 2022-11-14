@@ -11,7 +11,7 @@ class TestCsvCombiner(unittest.TestCase):
 
         files = ["fixtures/accessories.csv", 'fixtures/clothing.csv', 'fixtures/household_cleaners.csv']
         c = Combiner()
-        c.combine(files)
+        c.combine(files, False)
         df = pd.read_csv('combined_file.csv')
         self.assertTrue(len(df) == len(pd.read_csv("fixtures/accessories.csv")) +
                         len(pd.read_csv("fixtures/clothing.csv")) +
@@ -23,7 +23,7 @@ class TestCsvCombiner(unittest.TestCase):
 
         files = ["fixtures/filedoesntexsit.csv", "fixtures/accessories.csv"]
         c = Combiner()
-        c.combine(files)
+        c.combine(files, False)
         df = pd.read_csv('combined_file.csv')
         self.assertTrue(len(df) == len(pd.read_csv("fixtures/accessories.csv")))
 
@@ -32,16 +32,16 @@ class TestCsvCombiner(unittest.TestCase):
 
         files = ["fixtures/notcsv.txt", "fixtures/accessories.csv"]
         c = Combiner()
-        c.combine(files)
+        c.combine(files, False)
         df = pd.read_csv('combined_file.csv')
-        self.assertTrue(len(df) + 1 == len(pd.read_csv("fixtures/accessories.csv")))
+        self.assertTrue(len(df) == len(pd.read_csv("fixtures/accessories.csv")))
 
     def test_empty_file(self):
         """testing when inputs include empty .csv files"""
 
         files = ["fixtures/empty.csv", "fixtures/accessories.csv"]
         c = Combiner()
-        c.combine(files)
+        c.combine(files, False)
         df = pd.read_csv('combined_file.csv')
         self.assertTrue(len(df) == len(pd.read_csv("fixtures/accessories.csv")))
 
@@ -50,7 +50,7 @@ class TestCsvCombiner(unittest.TestCase):
 
         files = ["fixtures/accessories.csv", "fixtures/differentfile.csv"]
         c = Combiner()
-        c.combine(files)
+        c.combine(files, False)
         df = pd.read_csv('combined_file.csv',  sep='delimiter')
         self.assertTrue(len(df) == len(pd.read_csv("fixtures/accessories.csv")) +
                         len(pd.read_csv("fixtures/differentfile.csv")))
@@ -60,7 +60,7 @@ class TestCsvCombiner(unittest.TestCase):
 
         files = []
         c = Combiner()
-        c.combine(files)
+        c.combine(files, False)
         self.assertTrue(not os.path.exists('combined_file.csv'))
 
     if __name__ == '__main':
