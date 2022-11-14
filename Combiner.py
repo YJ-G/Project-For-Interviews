@@ -57,6 +57,7 @@ class Combiner:
         :param
         - csv: the files to be output
         - chunk_size: the size of chunks in which reading from files/outputting
+        - verbose: output to stdout or not
         """
         logging.info(f"output begins for {csv} ends in chunk size of {chunk_size}")
         for df in pd.read_csv(csv, chunksize=chunk_size):
@@ -75,6 +76,7 @@ class Combiner:
 
         :param
         - input_csvs: the files to be combined
+        - verbose: output to stdout or not, default value is True
         """
         files = self.verify_files(input_csvs)
         if os.path.exists(file_path):
